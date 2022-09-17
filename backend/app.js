@@ -31,4 +31,4 @@ app.use((req, res, next) => {
 
 app.use("/api/notes", notesRoutes)
 
-module.exports = app()
+module.exports = app

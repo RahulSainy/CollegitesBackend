@@ -2,7 +2,7 @@ const express = require("express");
 
 const NotesM = require("../models/notes");
 
-const router = expres.Router();
+const router = express.Router();
 
 router.post("", (req, res, next) => {
 //   const url = req.protocol + "://" + req.get("host");
@@ -86,3 +86,4 @@ router.delete("/:id", (req, res, next) => {
     );
   });
   
+  module.exports = router;
