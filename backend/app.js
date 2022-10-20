@@ -2,7 +2,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
-const notesRoutes = require("./routes/notes");
+const notesRoute = require("./routes/notes");
+const userRoute = require("./routes/user");
 
 const app = express();
 
@@ -17,7 +18,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use((req, res, next) => {
-  res.setHeader("Acces Control Orign", "*");
+  res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept"
@@ -29,6 +30,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/api/notes", notesRoutes)
+app.use("/api/notes", notesRoute);
+app.use("/api/users", userRoute);
 
-module.exports = app
+module.exports = app;
