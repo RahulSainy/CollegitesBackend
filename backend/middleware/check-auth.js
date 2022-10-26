@@ -1,15 +1,42 @@
-const jwt = require("jsonwebtoken");
-module.exports = (req,res,next)=>{
-    try{
-        const token = req.headers.authorization.split(" ")[1];
-        // Split it since it will retrun like this "Bearer jsfagasgsgaagasgsdfg"
+import jwt from 'jsonwebtoken'
+import asyncHandler from 'express-async-handler'
 
-        jwt.verify(token, "abc@1234_will_add_longer-later")
+
+// used as (req,res,next) since it's a middleware i.e a function 
+const protect = asyncHandler(async (req, res, next) => {
+    let token
+    console.log(req.headers.authorization)
+    if (
+        req.headers.authorization &&
+        req.headers.authorization.startsWith('Bearer')
+    ) {
+        try {
+            token = req.headers.authorization.split(' ')[1]
+            const decoded = jwt.verify(token, process.env.JWT_SECRET)
+
+            //here all information except password of user has been set to req.user that is decoded from token
+            req.user = await User.findById(decoded.id).select('-password')
+            console.log(req.user)
+            next()
+        } catch (error) {
+            console.error(error)
+            res.status(401)
+            throw new Error('Token failed')
+        }
+    }
+    if (!token) {
+        res.status(401)
+        throw new Error('Not authorized, no token')
+    }
+})
+const admin = (req, res, next) => {
+    if (req.user && req.user.isAdmin) {
         next()
     }
-    catch(error){
-        res.status(401).json({
-            message:"Auth Failed!"
-        });
+    else {
+        res.status(401)
+        throw new Error('Not Authorised as an admin')
     }
 }
+
+export {protect,admin}
